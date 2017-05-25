@@ -7,6 +7,8 @@ def get(url):
         return urlopen(url).read().decode(encoding="utf-8", errors="ignore")
     except urllib.error.URLError:
         return None
+    except UnicodeEncodeError:
+        print("UNICODE ERROR: " + url)
 
 def ensure_relative_path(link, base):
     return link.replace(base, "")
