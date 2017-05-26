@@ -71,8 +71,7 @@ for link in initial_set:
 
     new_links_filtered=set()
     for category in categories:
-        new_links_filtered.update(url.regex_filter(category["regex"], page_links))
-
+        new_links_filtered.update(url.regex_filter(category["regex"], new_links))
 
     for valid_link in new_links_filtered:
         if valid_link not in to_be_visited:
@@ -84,7 +83,7 @@ random.shuffle(to_be_visited)
 
 try:
 	while len(to_be_visited)>0:
-	    link = url.ensure_relative_path(to_be_visited.pop(0), base_url)
+	    link = to_be_visited.pop(0)
 	    name, category = parser.name_and_category_from_link(link)
 
 	    filename = 	os.path.join(args.definition_dir, category, name+".txt")
@@ -95,10 +94,15 @@ try:
 	    visited.add(link)
 
 	    page_content, page_links = gatherer.gather(base_url+link)
+	    
+	    new_links = set()
+	    for new_link in page_links:
+	        relative_link = url.ensure_relative_path(new_link, base_url)
+	        new_links.add(relative_link)
 
 	    new_links_filtered=set()
 	    for category in categories:
-	        new_links_filtered.update(url.regex_filter(category["regex"], page_links))
+	        new_links_filtered.update(url.regex_filter(category["regex"], new_links))
 
 	    for valid_link in new_links_filtered:
 	        if not valid_link in to_be_visited:
