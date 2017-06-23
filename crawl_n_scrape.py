@@ -26,6 +26,7 @@ parser.add_argument(
 # TODO implement: read robots.txt
 
 args = parser.parse_args()
+args.definition_dir=args.definition_dir.strip("/")
 
 module = __import__(args.definition_dir+".Parser")
 Parser = getattr(module, "Parser")
@@ -71,7 +72,12 @@ for link in initial_set:
 
     new_links_filtered=set()
     for category in categories:
-        new_links_filtered.update(url.regex_filter(category["regex"], new_links))
+        rtype = type(category["regex"])
+        if rtype is str: # single regex
+        	new_links_filtered.update(url.regex_filter(category["regex"], new_links))
+        elif rtype is list: # multiple regexes
+            for regex in category["regex"]:
+                new_links_filtered.update(url.regex_filter(regex, new_links))
 
     for valid_link in new_links_filtered:
         if valid_link not in to_be_visited:
@@ -94,7 +100,7 @@ try:
 	    visited.add(link)
 
 	    page_content, page_links = gatherer.gather(base_url+link)
-	    
+
 	    new_links = set()
 	    for new_link in page_links:
 	        relative_link = url.ensure_relative_path(new_link, base_url)
@@ -102,7 +108,12 @@ try:
 
 	    new_links_filtered=set()
 	    for category in categories:
-	        new_links_filtered.update(url.regex_filter(category["regex"], new_links))
+	        rtype = type(category["regex"])
+	        if rtype is str: # single regex
+	    	    new_links_filtered.update(url.regex_filter(category["regex"], new_links))
+	        elif rtype is list: # multiple regexes
+	            for regex in category["regex"]:
+	                new_links_filtered.update(url.regex_filter(regex, new_links))
 
 	    for valid_link in new_links_filtered:
 	        if not valid_link in to_be_visited:
