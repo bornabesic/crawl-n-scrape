@@ -37,7 +37,9 @@ def read_robots_txt(base_url):
             if not py_regex_val.endswith("$"): py_regex_val += ".*"
             robots_dict["disallow"].append(py_regex_val)
 
-        elif dkey == "crawl-delay": robots_dict["crawl-delay"] = dval
+        elif dkey == "crawl-delay":
+            try: robots_dict["crawl-delay"] = int(dval)
+            except ValueError: pass
             
     return robots_dict
 
