@@ -10,7 +10,6 @@ class Parser(HTMLParser):
 		# TODO handle start tag from html
 		pass
 
-
 	def handle_endtag(self, tag):
 		# TODO handle end tag from html
 		pass
@@ -23,18 +22,18 @@ class Parser(HTMLParser):
 		# TODO variables initialization
 		# e.g. self.article="", used to accumulate text
 		pass
-		
-	def retreive_data(self):
+
+	def retrieve_data(self):
 		# used to retreive scraped data from web page
 		# called just after 'feed' method
-		
+
 		# TODO data processing if necessary
-		
+
 		return None
 
 	def name_and_category_from_link(self, link):
 		# TODO return category from link
-		
+
 		name = None
 		category = None
 		return name, category

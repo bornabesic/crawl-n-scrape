@@ -25,6 +25,6 @@ def regex_filter(regex, links):
 
 def extract_data(page, parser):
     parser.feed(page)
-    data = parser.retreive_data()
+    data = parser.retrieve_data()
     parser.reset_all_variables()
     return data
