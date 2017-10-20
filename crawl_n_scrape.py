@@ -42,7 +42,7 @@ parser = Parser.Parser()
 with open(os.path.join(args.definition_dir, "def.json"), "r", encoding = "utf-8") as def_file:
     definition = json.load(def_file)
 
-base_url = definition["base_url"]
+base_url = definition["base_url"].rstrip("/")
 categories = definition["categories"]
 
 # --------------------- INITIALIZATION---------------------
