@@ -28,3 +28,12 @@ def extract_data(page, parser):
     data = parser.retrieve_data()
     parser.reset_all_variables()
     return data
+
+_url_pattern = re.compile("href=\"([^\"]*)\"")
+def gather_links(url):
+    web_page = get(url)
+    if web_page==None:
+        return None, set()
+
+    links = _url_pattern.findall(web_page)
+    return web_page, set(links)

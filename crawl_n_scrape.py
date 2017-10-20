@@ -2,8 +2,6 @@
 
 import url
 import robots
-from LinkGatherer import LinkGatherer
-
 import os
 import os.path
 import random
@@ -35,7 +33,7 @@ parser.add_argument(
 )
 
 args = parser.parse_args()
-args.definition_dir = args.definition_dir.strip("/")
+args.definition_dir = args.definition_dir.rstrip("/")
 
 module = __import__(args.definition_dir+".Parser")
 Parser = getattr(module, "Parser")
@@ -109,10 +107,8 @@ for category in categories:
 
     initial_set.update(category["seed"])
 
-gatherer = LinkGatherer()
-
 for link in initial_set:
-    page_content, page_links = gatherer.gather(base_url+link)
+    page_content, page_links = url.gather_links(base_url+link)
 
     valid_links = filter_valid_links(page_links, categories, base_url)
 
@@ -136,7 +132,7 @@ try:
 
 	    visited.add(link)
 
-	    page_content, page_links = gatherer.gather(base_url+link)
+	    page_content, page_links = url.gather_links(base_url+link)
 
 	    valid_links = filter_valid_links(page_links, categories, base_url)
 
