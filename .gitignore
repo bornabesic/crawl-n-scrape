@@ -4,5 +4,6 @@
 !crawl_n_scrape.py
 !seed_def/
 !poets_sample_def/
+!tools/
 !url.py
 !robots.py
