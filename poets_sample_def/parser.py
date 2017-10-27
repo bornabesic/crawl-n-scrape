@@ -43,7 +43,7 @@ _webpage_parser = WebpageParser()
 """ REQUIRED METHODS """
 
 def parse(html: str) -> str:
-	""" Returns the extracted data from the given HTML """
+    """ Returns the extracted data from the given HTML """
     _webpage_parser.feed(html)
     data = _webpage_parser.retrieve_data()
     _webpage_parser.reset_all_variables()
