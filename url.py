@@ -23,12 +23,6 @@ def regex_filter(regex, links):
 
     return filtered
 
-def extract_data(page, parser):
-    parser.feed(page)
-    data = parser.retrieve_data()
-    parser.reset_all_variables()
-    return data
-
 _url_pattern = re.compile("href=\"([^\"]*)\"")
 def gather_links(url):
     web_page = get(url)

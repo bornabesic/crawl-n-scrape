@@ -9,35 +9,33 @@ import time
 import argparse
 import json
 
-parser = argparse.ArgumentParser(
+args_parser = argparse.ArgumentParser(
 	formatter_class = argparse.ArgumentDefaultsHelpFormatter
 )
 
-parser.add_argument(
+args_parser.add_argument(
 	"--sitemap",
 	action = "store_true",
 	help = "Extract links by parsing the sitemap"
 )
 
-parser.add_argument(
+args_parser.add_argument(
 	"--time_delay",
 	type = float,
 	default = 3,
 	help = "Time delay (in seconds) between each web page access"
 )
 
-parser.add_argument(
+args_parser.add_argument(
 	"definition_dir",
 	type = str,
 	help = "Name of the directory containing def.json and Parser.py"
 )
 
-args = parser.parse_args()
+args = args_parser.parse_args()
 args.definition_dir = args.definition_dir.rstrip("/")
 
-module = __import__(args.definition_dir+".Parser")
-Parser = getattr(module, "Parser")
-parser = Parser.Parser()
+parser = __import__("{}.parser".format(args.definition_dir), fromlist = ("parse", "name_and_category_from_link"))
 
 with open(os.path.join(args.definition_dir, "def.json"), "r", encoding = "utf-8") as def_file:
     definition = json.load(def_file)
@@ -146,7 +144,7 @@ try:
 	        continue
 
 	    if page_content:
-	        data = url.extract_data(page_content, parser)
+	        data = parser.parse(page_content)
 
 	        with open(filename, "wt", encoding = "utf-8") as f:
 	            print(link)
