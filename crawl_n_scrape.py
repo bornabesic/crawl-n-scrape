@@ -8,6 +8,7 @@ import random
 import time
 import argparse
 import json
+import sys
 
 args_parser = argparse.ArgumentParser(
 	formatter_class = argparse.ArgumentDefaultsHelpFormatter
@@ -35,7 +36,17 @@ args_parser.add_argument(
 args = args_parser.parse_args()
 args.definition_dir = args.definition_dir.rstrip("/")
 
-parser = __import__("{}.parser".format(args.definition_dir), fromlist = ("parse", "name_and_category_from_link"))
+required_methods = ["parse", "name_and_category_from_link"]
+parser = __import__("{}.parser".format(args.definition_dir), fromlist = required_methods)
+
+all_methods_available = True
+for method_name in required_methods:
+    method_available = hasattr(parser, method_name)
+    if not method_available:
+        print("Method '{}' is missing from the parser.py".format(method_name))
+        all_methods_available = False
+
+if not all_methods_available: sys.exit(1)
 
 with open(os.path.join(args.definition_dir, "def.json"), "r", encoding = "utf-8") as def_file:
     definition = json.load(def_file)
