@@ -1,6 +1,7 @@
 # Crawl 'n' Scrape
 ```
 usage: crawl_n_scrape.py [-h] [--sitemap] [--time_delay TIME_DELAY]
+                         [--file_format FILE_FORMAT]
                          definition_dir
 
 positional arguments:
@@ -13,4 +14,6 @@ optional arguments:
   --time_delay TIME_DELAY
                         Time delay (in seconds) between each web page access
                         (default: 3)
+  --file_format FILE_FORMAT
+                        Scraped data file format (default: txt)
   ```
