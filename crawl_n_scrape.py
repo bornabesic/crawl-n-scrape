@@ -42,6 +42,9 @@ args_parser.add_argument(
 
 args = args_parser.parse_args()
 args.definition_dir = args.definition_dir.rstrip("/")
+if not os.path.exists(args.definition_dir):
+	print("The specified definition directory does not exist.")
+	sys.exit(1)
 
 required_methods = ["parse", "name_and_category_from_link"]
 parser = __import__("{}.parser".format(args.definition_dir), fromlist = required_methods)
