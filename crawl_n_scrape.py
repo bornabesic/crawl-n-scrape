@@ -4,7 +4,6 @@ import url
 import robots
 import os
 import os.path
-import random
 import time
 import argparse
 import json
@@ -15,8 +14,15 @@ args_parser = argparse.ArgumentParser(
 )
 
 args_parser.add_argument(
+	"definition_dir",
+	type = str,
+	help = "Name of the directory containing def.json and Parser.py"
+)
+
+args_parser.add_argument(
 	"--sitemap",
 	action = "store_true",
+	default = False,
 	help = "Extract links by parsing the sitemap"
 )
 
@@ -28,9 +34,10 @@ args_parser.add_argument(
 )
 
 args_parser.add_argument(
-	"definition_dir",
+	"--file_format",
 	type = str,
-	help = "Name of the directory containing def.json and Parser.py"
+	default = "txt",
+	help = "Scraped data file format"
 )
 
 args = args_parser.parse_args()
@@ -57,11 +64,9 @@ categories = definition["categories"]
 # --------------------- INITIALIZATION---------------------
 
 def filter_valid_links(links, categories, base_url):
-	relative_links = set()
-	for link in links:
-		relative_links.add(url.ensure_relative_path(link, base_url))
-
+	relative_links = set(map(lambda link: url.ensure_relative_path(link, base_url), links))
 	filtered_links = set()
+
 	for category in categories:
 		rtype = type(category["regex"])
 		if rtype is str: # single regex
@@ -98,14 +103,13 @@ if os.path.isfile(visited_file_path):
 		visited.update([l for l in visited_file.read().split("\n") if l.strip()!=""])
 		print("Read {} visited links from definition directory.".format(len(visited)))
 
-to_be_visited = []
+to_be_visited = set()
 initial_set = set()
 initial_set.add("/")
 
 # add links from the sitemap
 for sitemap_url in filter_valid_links(sitemap_urls, categories, base_url):
-	if sitemap_url not in to_be_visited:
-		to_be_visited.append(sitemap_url)
+	to_be_visited.add(sitemap_url)
 
 # prepare categories
 for category in categories:
@@ -118,48 +122,35 @@ for category in categories:
 
 for link in initial_set:
     page_content, page_links = url.gather_links(base_url+link)
-
     valid_links = filter_valid_links(page_links, categories, base_url)
+    to_be_visited.update(valid_links)
 
-    for valid_link in valid_links:
-        if valid_link not in to_be_visited:
-            to_be_visited.append(valid_link)
-
-random.shuffle(to_be_visited)
+del initial_set
 
 # --------------------- CRAWL AND SCRAPE ---------------------
 
 try:
 	while len(to_be_visited) > 0:
-	    link = to_be_visited.pop(0)
+	    link = to_be_visited.pop()
+	    if link in visited: continue
+
 	    name, category = parser.name_and_category_from_link(link)
-
-	    filename = 	os.path.join(args.definition_dir, category, name+".txt")
-
-	    if link in visited:
-	        continue
+	    filename = 	os.path.join(args.definition_dir, category, "{}.{}".format(name, args.file_format))
 
 	    visited.add(link)
 
+	    time.sleep(time_delay)
 	    page_content, page_links = url.gather_links(base_url+link)
 
 	    valid_links = filter_valid_links(page_links, categories, base_url)
+	    to_be_visited.update(valid_links)
 
-	    for valid_link in valid_links:
-	        if not valid_link in to_be_visited:
-	            to_be_visited.append(valid_link)
+	    if os.path.isfile(filename) or page_content is None: continue
 
-	    time.sleep(time_delay)
-
-	    if os.path.isfile(filename):
-	        continue
-
-	    if page_content:
-	        data = parser.parse(page_content)
-
-	        with open(filename, "wt", encoding = "utf-8") as f:
-	            print(link)
-	            f.write(data)
+	    data = parser.parse(page_content)
+	    with open(filename, "wt", encoding = "utf-8") as f:
+	        print(link)
+	        f.write(data)
 except KeyboardInterrupt:
 	pass
 
