@@ -8,6 +8,7 @@ import time
 import argparse
 import json
 import sys
+import msg
 
 args_parser = argparse.ArgumentParser(
 	formatter_class = argparse.ArgumentDefaultsHelpFormatter
@@ -43,7 +44,7 @@ args_parser.add_argument(
 args = args_parser.parse_args()
 args.definition_dir = args.definition_dir.rstrip("/")
 if not os.path.exists(args.definition_dir):
-	print("The specified definition directory does not exist.")
+	msg.error("The specified definition directory does not exist.")
 	sys.exit(1)
 
 required_methods = ["parse", "name_and_category_from_link"]
@@ -53,7 +54,7 @@ all_methods_available = True
 for method_name in required_methods:
     method_available = hasattr(parser, method_name)
     if not method_available:
-        print("Method '{}' is missing from the parser.py".format(method_name))
+        msg.error("Method '{}' is missing from the parser.py".format(method_name))
         all_methods_available = False
 
 if not all_methods_available: sys.exit(1)
@@ -88,15 +89,15 @@ rbts = robots.read_robots_txt(base_url)
 if rbts:
 	if rbts["crawl-delay"]:
 		time_delay = max(rbts["crawl-delay"], args.time_delay)
-		print("[robots.txt] Time delay: {} s".format(time_delay))
+		msg.info("robots.txt - Time delay: {} s".format(time_delay))
 
 	if args.sitemap and len(rbts["sitemaps"]) > 0:
 		for sitemap in rbts["sitemaps"]:
-			print("[robots.txt] Sitemap: {}".format(sitemap))
+			msg.info("robots.txt - Sitemap: {}".format(sitemap))
 			local_sitemap_urls = robots.read_sitemap(sitemap, base_url)
 			if len(local_sitemap_urls)>0:
 				sitemap_urls.extend(local_sitemap_urls)
-				print("[robots.txt] Extracted {} links from the sitemap".format(len(local_sitemap_urls)))
+				msg.info("robots.txt - Extracted {} links from the sitemap".format(len(local_sitemap_urls)))
 
 # read visited links file
 visited = set()
@@ -104,7 +105,7 @@ visited_file_path = os.path.join(args.definition_dir, "visited.txt")
 if os.path.isfile(visited_file_path):
 	with open(visited_file_path, "r", encoding="utf-8") as visited_file:
 		visited.update([l for l in visited_file.read().split("\n") if l.strip()!=""])
-		print("Read {} visited links from definition directory.".format(len(visited)))
+		msg.info("Read {} visited links from definition directory.".format(len(visited)))
 
 to_be_visited = set()
 initial_set = set()
@@ -132,12 +133,17 @@ del initial_set
 
 # --------------------- CRAWL AND SCRAPE ---------------------
 
+category_names = set(map(lambda category: category["name"], categories))
 try:
 	while len(to_be_visited) > 0:
 	    link = to_be_visited.pop()
 	    if link in visited: continue
 
 	    name, category = parser.name_and_category_from_link(link)
+	    if category not in category_names:
+	        msg.warning("Category '{}' is not specified in the def.json but 'name_and_category_from_link' returned it. Skipping...".format(category))
+	        continue
+
 	    filename = 	os.path.join(args.definition_dir, category, "{}.{}".format(name, args.file_format))
 
 	    visited.add(link)
@@ -148,16 +154,17 @@ try:
 	    valid_links = filter_valid_links(page_links, categories, base_url)
 	    to_be_visited.update(valid_links)
 
+	    msg.info("Visited {}".format(link))
+
 	    if os.path.isfile(filename) or page_content is None: continue
 
 	    data = parser.parse(page_content)
 	    with open(filename, "wt", encoding = "utf-8") as f:
-	        print(link)
 	        f.write(data)
 except KeyboardInterrupt:
 	pass
 
-print("Saving visited links...")
+msg.info("Saving visited links...")
 with open(visited_file_path, "w", encoding = "utf-8") as visited_file:
 	for visited_link in visited:
 		print(visited_link, file = visited_file)

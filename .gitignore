@@ -6,4 +6,5 @@
 !poets_sample_def/
 !tools/
 !url.py
+!msg.py
 !robots.py
