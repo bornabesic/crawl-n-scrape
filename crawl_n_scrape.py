@@ -8,6 +8,8 @@ import time
 import argparse
 import json
 import sys
+import pickle
+import gzip
 import msg
 
 args_parser = argparse.ArgumentParser(
@@ -101,13 +103,15 @@ if rbts:
 
 # read visited links file
 visited = set()
-visited_file_path = os.path.join(args.definition_dir, "visited.txt")
-if os.path.isfile(visited_file_path):
-	with open(visited_file_path, "r", encoding="utf-8") as visited_file:
-		visited.update([l for l in visited_file.read().split("\n") if l.strip()!=""])
-		msg.info("Read {} visited links from definition directory.".format(len(visited)))
-
 to_be_visited = set()
+
+state_file_path = os.path.join(args.definition_dir, "state.cns")
+
+if os.path.isfile(state_file_path):
+	with gzip.open(state_file_path, "rb") as state_file:
+		visited, to_be_visited = pickle.load(state_file)
+		msg.info("Read state (visited: {}, to be visited: {})".format(len(visited), len(to_be_visited)))
+
 initial_set = set()
 initial_set.add("/")
 
@@ -164,7 +168,8 @@ try:
 except KeyboardInterrupt:
 	pass
 
-msg.info("Saving visited links...")
-with open(visited_file_path, "w", encoding = "utf-8") as visited_file:
-	for visited_link in visited:
-		print(visited_link, file = visited_file)
+msg.info("Saving the state...")
+
+state = (visited, to_be_visited)
+with gzip.open(state_file_path, "wb") as state_file:
+	pickle.dump(state, state_file)
