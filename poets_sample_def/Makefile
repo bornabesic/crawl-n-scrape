@@ -4,4 +4,4 @@ msg:
 
 clean:
 	rm -rf */
-	rm -rf visited.txt
+	rm -rf state.cns

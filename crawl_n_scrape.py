@@ -10,6 +10,7 @@ import json
 import sys
 import pickle
 import gzip
+import platform
 import msg
 
 args_parser = argparse.ArgumentParser(
@@ -69,6 +70,10 @@ categories = definition["categories"]
 
 # --------------------- INITIALIZATION---------------------
 
+system = platform.system()
+release = platform.release()
+print("Crawl 'n' Scrape - {} {}".format(system, release))
+
 def filter_valid_links(links, categories, base_url):
 	relative_links = set(map(lambda link: url.ensure_relative_path(link, base_url), links))
 	filtered_links = set()
@@ -107,33 +112,37 @@ to_be_visited = set()
 
 state_file_path = os.path.join(args.definition_dir, "state.cns")
 
-if os.path.isfile(state_file_path):
+if os.path.isfile(state_file_path): # there is a state file
 	with gzip.open(state_file_path, "rb") as state_file:
 		visited, to_be_visited = pickle.load(state_file)
 		msg.info("Read state (visited: {}, to be visited: {})".format(len(visited), len(to_be_visited)))
+else:
+	msg.info("Initializing...")
+	initial_set = set()
+	initial_set.add("/")
 
-initial_set = set()
-initial_set.add("/")
+	# add links from the sitemap
+	for sitemap_url in filter_valid_links(sitemap_urls, categories, base_url):
+		to_be_visited.add(sitemap_url)
 
-# add links from the sitemap
-for sitemap_url in filter_valid_links(sitemap_urls, categories, base_url):
-	to_be_visited.add(sitemap_url)
+	# prepare categories
+	for category in categories:
+		try:
+			os.mkdir(os.path.join(args.definition_dir, category["name"]))
+		except FileExistsError:
+			pass
 
-# prepare categories
-for category in categories:
-    try:
-        os.mkdir(os.path.join(args.definition_dir, category["name"]))
-    except FileExistsError:
-        pass
+		initial_set.update(category["seed"])
 
-    initial_set.update(category["seed"])
+	for link in initial_set:
+		page_content, page_links = url.gather_links(base_url+link)
+		if page_content is None:
+			msg.warning("Unable to reach {} (no internet connection?)".format(link))
+			continue
+		valid_links = filter_valid_links(page_links, categories, base_url)
+		to_be_visited.update(valid_links)
 
-for link in initial_set:
-    page_content, page_links = url.gather_links(base_url+link)
-    valid_links = filter_valid_links(page_links, categories, base_url)
-    to_be_visited.update(valid_links)
-
-del initial_set
+	del initial_set
 
 # --------------------- CRAWL AND SCRAPE ---------------------
 
@@ -153,20 +162,28 @@ try:
 	    visited.add(link)
 
 	    time.sleep(time_delay)
+
 	    page_content, page_links = url.gather_links(base_url+link)
+	    if page_content is None:
+	        msg.warning("Unable to reach {} (no internet connection?)".format(link))
+	        continue
+
+	    msg.info("Visited {}".format(link))
 
 	    valid_links = filter_valid_links(page_links, categories, base_url)
 	    to_be_visited.update(valid_links)
 
-	    msg.info("Visited {}".format(link))
-
-	    if os.path.isfile(filename) or page_content is None: continue
+	    if os.path.isfile(filename): continue # file already exists
 
 	    data = parser.parse(page_content)
 	    with open(filename, "wt", encoding = "utf-8") as f:
 	        f.write(data)
-except KeyboardInterrupt:
+
+	msg.info("There are no more links to be visited. Program will now exit.")
+except KeyboardInterrupt: # Ctrl + C
 	pass
+except Exception as e:
+	msg.error(str(e))
 
 msg.info("Saving the state...")
 
