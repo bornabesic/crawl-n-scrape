@@ -1,4 +1,5 @@
 # Crawl 'n' Scrape
+[![Build Status](https://travis-ci.org/bornabesic/crawl-n-scrape.svg?branch=travis-ci)](https://travis-ci.org/bornabesic/crawl-n-scrape)
 ```
 usage: crawl_n_scrape.py [-h] [--sitemap] [--time_delay TIME_DELAY]
                          [--file_format FILE_FORMAT]
