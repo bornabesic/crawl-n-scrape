@@ -1,0 +1,12 @@
+User-agent: *
+Disallow: /users/
+Disallow: /accounts/
+Disallow: /forms/
+Disallow: /facebook/
+Disallow: /ankete/
+Disallow: /ankete-rezultat/
+Disallow: /pretraga/
+Disallow: /analytics/
+Disallow: /poruke/
+
+

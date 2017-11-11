@@ -8,6 +8,9 @@ def read_robots_txt(base_url):
     robots = get("{}/robots.txt".format(base_url))
     if not robots: return None
 
+    return parse_robots_txt(robots)
+
+def parse_robots_txt(robots):
     directives = robots.split("\n")
 
     robots_dict = {
