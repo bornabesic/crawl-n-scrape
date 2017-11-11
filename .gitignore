@@ -5,6 +5,7 @@
 !seed_def/
 !poets_sample_def/
 !tools/
+!tests/
 !url.py
 !msg.py
 !robots.py

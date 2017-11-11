@@ -74,20 +74,6 @@ system = platform.system()
 release = platform.release()
 print("Crawl 'n' Scrape - {} {}".format(system, release))
 
-def filter_valid_links(links, categories, base_url):
-	relative_links = set(map(lambda link: url.ensure_relative_path(link, base_url), links))
-	filtered_links = set()
-
-	for category in categories:
-		rtype = type(category["regex"])
-		if rtype is str: # single regex
-			filtered_links.update(url.regex_filter(category["regex"], relative_links))
-		elif rtype is list: # multiple regexes
-			for regex in category["regex"]:
-				filtered_links.update(url.regex_filter(regex, relative_links))
-
-	return filtered_links
-
 time_delay = args.time_delay
 sitemap_urls = list()
 
@@ -122,7 +108,7 @@ else:
 	initial_set.add("/")
 
 	# add links from the sitemap
-	for sitemap_url in filter_valid_links(sitemap_urls, categories, base_url):
+	for sitemap_url in url.filter_valid_links(sitemap_urls, categories, base_url):
 		to_be_visited.add(sitemap_url)
 
 	# prepare categories
@@ -135,11 +121,11 @@ else:
 		initial_set.update(category["seed"])
 
 	for link in initial_set:
-		page_content, page_links = url.gather_links(base_url+link)
+		page_content, page_links = url.content_and_links(base_url+link)
 		if page_content is None:
 			msg.warning("Unable to reach {} (no internet connection?)".format(link))
 			continue
-		valid_links = filter_valid_links(page_links, categories, base_url)
+		valid_links = url.filter_valid_links(page_links, categories, base_url)
 		to_be_visited.update(valid_links)
 
 	del initial_set
@@ -163,14 +149,14 @@ try:
 
 	    time.sleep(time_delay)
 
-	    page_content, page_links = url.gather_links(base_url+link)
+	    page_content, page_links = url.content_and_links(base_url+link)
 	    if page_content is None:
 	        msg.warning("Unable to reach {} (no internet connection?)".format(link))
 	        continue
 
 	    msg.info("Visited {}".format(link))
 
-	    valid_links = filter_valid_links(page_links, categories, base_url)
+	    valid_links = url.filter_valid_links(page_links, categories, base_url)
 	    to_be_visited.update(valid_links)
 
 	    if os.path.isfile(filename): continue # file already exists

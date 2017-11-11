@@ -24,10 +24,28 @@ def regex_filter(regex, links):
     return filtered
 
 _url_pattern = re.compile("href=\"([^\"]*)\"")
-def gather_links(url):
-    web_page = get(url)
-    if web_page==None:
-        return None, set()
+def content_and_links(url):
+    html = get(url)
+    if html is None:
+        links = set()
+    else:
+        links = links_from_html(html)
+    return html, links
 
-    links = _url_pattern.findall(web_page)
-    return web_page, set(links)
+def links_from_html(html):
+    links = _url_pattern.findall(html)
+    return set(links)
+
+def filter_valid_links(links, categories, base_url):
+    relative_links = set(map(lambda link: ensure_relative_path(link, base_url), links))
+    filtered_links = set()
+
+    for category in categories:
+        rtype = type(category["regex"])
+        if rtype is str: # single regex
+            filtered_links.update(regex_filter(category["regex"], relative_links))
+        elif rtype is list: # multiple regexes
+            for regex in category["regex"]:
+                filtered_links.update(regex_filter(regex, relative_links))
+
+    return filtered_links
