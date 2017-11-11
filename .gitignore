@@ -1,5 +1,6 @@
 *
 
+!.travis.yml
 !LinkGatherer.py
 !crawl_n_scrape.py
 !seed_def/
