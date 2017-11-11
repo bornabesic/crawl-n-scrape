@@ -1,3 +1,4 @@
+from sys import stderr
 
 class TermColor:
     INFO = "\033[94m" # blue
@@ -12,4 +13,4 @@ def warning(text):
 	print("{}[WARNING]{} {}".format(TermColor.WARNING, TermColor.END, text))
 
 def error(text):
-	print("{}[ERROR]{} {}".format(TermColor.ERROR, TermColor.END, text))
+	print("{}[ERROR]{} {}".format(TermColor.ERROR, TermColor.END, text), file = stderr)
