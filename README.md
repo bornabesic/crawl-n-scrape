@@ -7,7 +7,7 @@ usage: crawl_n_scrape.py [-h] [--sitemap] [--time_delay TIME_DELAY]
 
 positional arguments:
   definition_dir        Name of the directory containing def.json and
-                        Parser.py
+                        parser.py
 
 optional arguments:
   -h, --help            show this help message and exit
