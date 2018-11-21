@@ -18,3 +18,14 @@ optional arguments:
   --file_format FILE_FORMAT
                         Scraped data file format (default: txt)
   ```
+
+## TODO
+
+- Use YAML instead of JSON for definition files
+- Measure the elapsed time
+- Remove compression of visited links file (`state.cns`)
+- Add a list field to the definition, containing regexes of URLs from which only the links (no content) should be extracted
+- Fix colorized text in terminal on Windows
+- Refactor the code
+- Add Wiki
+- Write more unit tests
