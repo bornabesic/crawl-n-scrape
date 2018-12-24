@@ -1,16 +1,15 @@
 from sys import stderr
 
-class TermColor:
-    INFO = "\033[94m" # blue
-    WARNING = "\033[93m" # yellow
-    ERROR = "\033[91m" # red
-    END = "\033[0m"
+_INFO = "\033[94m" # blue
+_WARNING = "\033[93m" # yellow
+_ERROR = "\033[91m" # red
+_END = "\033[0m"
 
 def info(text):
-	print("{}[INFO]{} {}".format(TermColor.INFO, TermColor.END, text))
+	print(f"{_INFO}[INFO]{_END} {text}")
 
 def warning(text):
-	print("{}[WARNING]{} {}".format(TermColor.WARNING, TermColor.END, text))
+	print(f"{_WARNING}[WARNING]{_END} {text}")
 
 def error(text):
-	print("{}[ERROR]{} {}".format(TermColor.ERROR, TermColor.END, text), file = stderr)
+	print(f"{_ERROR}[ERROR]{_END} {text}", file = stderr)

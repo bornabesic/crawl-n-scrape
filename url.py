@@ -23,7 +23,7 @@ def regex_filter(regex, links):
 
     return filtered
 
-_url_pattern = re.compile("href=\"([^\"]*)\"")
+_URL_PATTERN = re.compile("href=\"([^\"]*)\"")
 def content_and_links(url):
     html = get(url)
     if html is None:
@@ -33,7 +33,7 @@ def content_and_links(url):
     return html, links
 
 def links_from_html(html):
-    links = _url_pattern.findall(html)
+    links = _URL_PATTERN.findall(html)
     return set(links)
 
 def filter_valid_links(links, categories, base_url):

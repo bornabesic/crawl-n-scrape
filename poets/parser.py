@@ -42,13 +42,13 @@ _webpage_parser = WebpageParser()
 
 """ REQUIRED METHODS """
 
-def parse(html: str) -> str:
-    """ Returns the extracted data from the given HTML """
-    _webpage_parser.feed(html)
-    data = _webpage_parser.retrieve_data()
-    _webpage_parser.reset_all_variables()
-    return data
-
-def name_and_category_from_link(link: str) -> (str, str):
-	""" Returns (name, category) tuple from the given link """
-	return _webpage_parser.name_and_category_from_link(link)
+def parse(link: str, html: str) -> (str, str):
+	"""
+	Returns the file name and the extracted data from
+	the given link and HTML content.
+	"""
+	_webpage_parser.feed(html)
+	data = _webpage_parser.retrieve_data()
+	_webpage_parser.reset_all_variables()
+	name, category = _webpage_parser.name_and_category_from_link(link)
+	return name, data

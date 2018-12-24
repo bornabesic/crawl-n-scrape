@@ -4,4 +4,4 @@ msg:
 
 clean:
 	rm -rf */
-	rm -rf state.cns
+	rm -rf links.pkl
