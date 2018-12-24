@@ -19,8 +19,8 @@ class Linker:
 
         if os.path.exists(self.state_file_path): # there is a state file
             with open(self.state_file_path, "rb") as state_file:
-                visited, to_be_visited = pickle.load(state_file)
-                msg.info(f"Read state (visited: {len(visited)}, to be visited: {len(to_be_visited)})")
+                self.visited, self.to_be_visited = pickle.load(state_file)
+                msg.info(f"Read state (visited: {len(self.visited)}, to be visited: {len(self.to_be_visited)})")
         else:
             msg.info("Initializing...")
 
