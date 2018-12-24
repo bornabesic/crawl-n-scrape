@@ -21,7 +21,7 @@ def parse_cli_args():
     args_parser.add_argument(
         "definition_dir",
         type=str,
-        help="Name of the directory containing def.json and Parser.py"
+        help="Name of the directory containing config.ini and parser.py"
     )
 
     args_parser.add_argument(
