@@ -45,12 +45,12 @@ class Linker:
         return self
 
     def __next__(self):
-        try:
-            link, category = self.to_be_visited.pop()
-            self.visited.add(link)
-            return link, category
-        except KeyError:
+        if self.empty():
             raise StopIteration
+
+        link, category = self.to_be_visited.pop()
+        self.visited.add(link)
+        return link, category
 
     def _ensure_relative_link(self, link: str) -> str:
         return link.replace(self.config.base_url, "")
