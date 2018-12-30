@@ -1,3 +1,7 @@
+"""
+Crawl 'n' Scrape linker module.
+"""
+
 import os.path
 import pickle
 from typing import Iterable
@@ -9,6 +13,9 @@ import url
 _STATE_FILENAME = "links.pkl"
 
 class Linker:
+    """
+    Iterable class that handles links during the crawling.
+    """
 
     def __init__(self, config: Config):
         self.config = config
@@ -56,13 +63,28 @@ class Linker:
         return link.replace(self.config.base_url, "")
 
     def empty(self) -> bool:
+        """
+        Check if there are links left to be visited.
+        """
+
         return not self.to_be_visited
 
     def add_links(self, links: Iterable[str]) -> None:
+        """
+        Call add_link() for each link from the given list of
+        links.
+        """
+
         for link in links:
             self.add_link(link)
 
     def add_link(self, link: str) -> None:
+        """
+        Add the given link to the links that will be visited,
+        if the link matches any of the categories in the
+        configuration.
+        """
+
         relative_link = self._ensure_relative_link(link)
 
         # Check if the link matches any of the categories
@@ -72,7 +94,12 @@ class Linker:
                 break
 
     def save_state(self):
-        msg.info("Saving the state...")
+        """
+        Save the visited links and the links that will be
+        visited into a file.
+        """
+
+        # msg.info("Saving the state...")
 
         state = (self.visited, self.to_be_visited)
         with open(self.state_file_path, "wb") as state_file:
