@@ -4,6 +4,7 @@ import os.path
 import platform
 import sys
 import time
+import traceback
 
 import msg
 import url
@@ -61,7 +62,7 @@ def main():
     try:
         config = Config(args.definition_dir)
     except Exception as error:
-        msg.error(str(error))
+        msg.error(traceback.format_exc())
         sys.exit(1)
 
     # --------------------- INITIALIZATION ---------------------
@@ -93,7 +94,7 @@ def main():
             linker.add_links(links)
 
             # Parse the content
-            filename, data = config.parser.parse(link, content)
+            filename, data = config.scraper.scrape(link, content)
 
             # Save the file
             file_path = os.path.join(
@@ -113,7 +114,7 @@ def main():
     except KeyboardInterrupt: # Ctrl + C
         pass
     except Exception as e:
-        msg.error(str(e))
+        msg.error(traceback.format_exc())
 
 if __name__ == "__main__":
     main()
