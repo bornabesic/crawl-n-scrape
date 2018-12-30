@@ -1,7 +1,14 @@
 import unittest
+from urllib.error import URLError
+
 from context import url
 
 class TestsURL(unittest.TestCase):
+
+	def test_get(self):
+		self.assertIsNotNone(url.get("https://google.com"))
+		self.assertIsNone(url.get("http://fail"))
+		self.assertIsNone(url.get("not even a url"))
 
 	def test_content_and_links(self):
 

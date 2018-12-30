@@ -18,9 +18,7 @@ def get(url: str, timeout: int = 10) -> str:
 
     try:
         return urlopen(url, timeout=timeout).read().decode(encoding="utf-8", errors="ignore")
-    except KeyboardInterrupt:
-        raise
-    except URLError:
+    except (URLError, ValueError):
         return None
 
 _HREF_PATTERN = re.compile("href=\"([^\"]*)\"")
