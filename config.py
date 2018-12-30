@@ -39,7 +39,8 @@ class Config:
 
         # Read the INI configuration file
         cfg_parser = ConfigParser()
-        cfg_parser.read(os.path.join(self.directory, _INI_FILENAME))
+        if not cfg_parser.read(os.path.join(self.directory, _INI_FILENAME)):
+            raise RuntimeError("INI file in the specified directory could not be read.")
 
         if _SECTION_DEFAULT not in cfg_parser:
             raise RuntimeError("Default section not present in the INI file.")
