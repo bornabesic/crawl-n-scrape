@@ -1,7 +1,20 @@
 # Crawl 'n' Scrape
 [![Build Status](https://travis-ci.org/bornabesic/crawl-n-scrape.svg?branch=travis-ci)](https://travis-ci.org/bornabesic/crawl-n-scrape)
+
+## Python
+
+Version required: >= __3.6__
+
+## Features
+- No dependencies! (only [The Python Standard Library](https://docs.python.org/3.6/library/index.html))
+- Regex-based web crawling
+- User-written scraping code
+- Scraped data divided into categories
+
+## Usage
+
 ```
-usage: crawl_n_scrape.py [-h] [--sitemap] [--time_delay TIME_DELAY]
+crawl_n_scrape.py [-h] [--sitemap] [--time_delay TIME_DELAY]
                          [--file_format FILE_FORMAT]
                          definition_dir
 
