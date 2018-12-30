@@ -1,13 +1,11 @@
 """
-Module containing a class that defines Crawl 'n' Scrape
-configuration.
+Crawl 'n' Scrape configuration module.
 """
 
 import importlib
 import os.path
 from configparser import ConfigParser
 
-import msg
 from category import Category
 
 # INI configuration file definition
@@ -15,7 +13,7 @@ _INI_FILENAME = "config.ini"
 
 _SECTION_DEFAULT = "default"
 
-_KEY_BASE_URL = "base_url" 
+_KEY_BASE_URL = "base_url"
 _KEY_REGEX = "regex"
 _KEY_SEED = "seed"
 
@@ -27,6 +25,10 @@ _REQUIRED_METHODS = [
 ]
 
 class Config:
+    """
+    Class containing the configuration for crawling
+    the web and scraping the content.
+    """
 
     def __init__(self, directory):
         self.directory = directory.rstrip("/")
@@ -34,7 +36,7 @@ class Config:
         # Check if the given directory exists
         if not os.path.exists(self.directory):
             raise FileNotFoundError("The specified directory does not exist.")
-        
+
         # Read the INI configuration file
         cfg_parser = ConfigParser()
         cfg_parser.read(os.path.join(self.directory, _INI_FILENAME))
