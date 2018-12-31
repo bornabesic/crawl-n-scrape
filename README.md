@@ -1,5 +1,6 @@
 # Crawl 'n' Scrape
 [![Build Status](https://travis-ci.org/bornabesic/crawl-n-scrape.svg?branch=travis-ci)](https://travis-ci.org/bornabesic/crawl-n-scrape)
+[![codecov](https://codecov.io/gh/bornabesic/crawl-n-scrape/branch/master/graph/badge.svg)](https://codecov.io/gh/bornabesic/crawl-n-scrape)
 
 ## Python
 
