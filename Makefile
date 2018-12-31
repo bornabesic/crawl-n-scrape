@@ -3,4 +3,4 @@ compile:
 	python -m py_compile *.py
 
 test:
-	python tests/test_url.py
+	coverage3 run -m unittest -v tests.test_url

@@ -1,12 +1,17 @@
 import unittest
 from urllib.error import URLError
 
-from context import url
+from .context import url
+
+_INTERNET_AVAILABLE = bool(url.get("https://google.com"))
 
 class TestsURL(unittest.TestCase):
 
 	def test_get(self):
-		self.assertIsNotNone(url.get("https://google.com"))
+
+		if _INTERNET_AVAILABLE:
+			self.assertIsNotNone(url.get("https://www.kaggle.com/"))
+
 		self.assertIsNone(url.get("http://fail"))
 		self.assertIsNone(url.get("not even a url"))
 
@@ -38,10 +43,6 @@ class TestsURL(unittest.TestCase):
 			"https://validator.w3.org/check?uri=referer"
 		}
 
-		content, links = url.content_and_links("https://www-cs-faculty.stanford.edu/~knuth/")
-
-		self.assertSetEqual(links, expected_links)
-
-
-if __name__ == "__main__":
-	unittest.main()
+		if _INTERNET_AVAILABLE:
+			content, links = url.content_and_links("https://www-cs-faculty.stanford.edu/~knuth/")
+			self.assertSetEqual(links, expected_links)
